@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bienvenue sur la page de la Machine !!!</title>
+<style>
+  body {
+    margin: 0;
+    padding: 20px 10px;
+    background: #008080;
+    font-family: "Times New Roman", Times, serif;
+    color: #000;
+  }
+  .fenetre {
+    max-width: 520px;
+    margin: 0 auto;
+    background: #c0c0c0;
+    border: 2px solid;
+    border-color: #fff #404040 #404040 #fff;
+    box-shadow: 1px 1px 0 #000;
+  }
+  .titre {
+    background: linear-gradient(90deg, #000080, #1084d0);
+    color: #fff;
+    font: bold 14px Arial, Helvetica, sans-serif;
+    padding: 4px 8px;
+  }
+  .contenu { padding: 16px; text-align: center; }
+  h1 { font-size: 26px; margin: 0 0 6px; color: #800000; }
+  .defile {
+    background: #000;
+    color: #0f0;
+    font: 14px "Courier New", monospace;
+    padding: 4px;
+    margin: 10px 0 16px;
+  }
+  hr { border: 0; border-top: 2px groove #fff; margin: 16px 0; }
+
+  button {
+    font: bold 18px Arial, Helvetica, sans-serif;
+    padding: 10px 24px;
+    background: #c0c0c0;
+    border: 3px solid;
+    border-color: #fff #404040 #404040 #fff;
+    cursor: pointer;
+  }
+  button:active:not(:disabled) { border-color: #404040 #fff #fff #404040; }
+  button:disabled { color: #808080; cursor: not-allowed; }
+  button:focus-visible { outline: 2px dotted #000; outline-offset: 2px; }
+
+  .ecran {
+    margin-top: 16px;
+    background: #000;
+    color: #0f0;
+    border: 2px solid;
+    border-color: #404040 #fff #fff #404040;
+    font-family: "Courier New", monospace;
+    min-height: 110px;
+    padding: 12px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+  }
+  #message { font-size: 22px; font-weight: bold; }
+  #chrono  { font-size: 56px; font-weight: bold; line-height: 1; }
+  .barre {
+    width: 100%;
+    height: 16px;
+    background: #202020;
+    border: 1px solid #0f0;
+    display: none;
+  }
+  #progres { height: 100%; width: 0; background: #0f0; }
+  .pied { font-size: 12px; margin-top: 12px; }
+  .clignote { animation: clignote 1s steps(2, start) infinite; }
+  @keyframes clignote { to { visibility: hidden; } }
+  @media (prefers-reduced-motion: reduce) { .clignote { animation: none; } }
+</style>
+</head>
+<body>
+<div class="fenetre">
+  <div class="titre">Machine.exe</div>
+  <div class="contenu">
+    <h1>La Machine</h1>
+    <div class="defile"><marquee>*** Bienvenue sur ma page web *** Meilleur résultat avec Netscape Navigator 4.0 ***</marquee></div>
+
+    <button id="bouton" type="button">Lancer la machine</button>
+
+    <div class="ecran" aria-live="polite">
+      <div id="message">En attente...</div>
+      <div id="chrono"></div>
+      <div class="barre" id="barre"><div id="progres"></div></div>
+    </div>
+
+    <hr>
+    <div class="pied">Identifiant : Dr Elias Hollow | Site optimisé 800x600</div>
+  </div>
+</div>
+
+<script>
+  const DUREE_COMPTE_A_REBOURS = 10; // secondes avant le lancement
+  const DUREE_LANCEMENT = 36;        // secondes entre "lancement" et "en route"
+
+  const bouton   = document.getElementById("bouton");
+  const message  = document.getElementById("message");
+  const chrono   = document.getElementById("chrono");
+  const barre    = document.getElementById("barre");
+  const progres  = document.getElementById("progres");
+
+  bouton.addEventListener("click", () => {
+    bouton.disabled = true;
+    message.classList.remove("clignote");
+    message.textContent = "Démarrage dans :";
+    chrono.textContent = DUREE_COMPTE_A_REBOURS;
+
+    let reste = DUREE_COMPTE_A_REBOURS;
+    const minuteur = setInterval(() => {
+      reste--;
+      chrono.textContent = reste;
+      if (reste <= 0) {
+        clearInterval(minuteur);
+        lancement();
+      }
+    }, 1000);
+  });
+
+  function lancement() {
+    message.textContent = "Lancement de la machine";
+    message.classList.add("clignote");
+    chrono.textContent = "";
+    barre.style.display = "block";
+    progres.style.width = "0";
+
+    const debut = Date.now();
+    const suivi = setInterval(() => {
+      const ecoule = (Date.now() - debut) / 1000;
+      progres.style.width = Math.min(100, (ecoule / DUREE_LANCEMENT) * 100) + "%";
+      if (ecoule >= DUREE_LANCEMENT) {
+        clearInterval(suivi);
+        enRoute();
+      }
+    }, 200);
+  }
+
+  function enRoute() {
+    message.classList.remove("clignote");
+    message.textContent = "Machine en route";
+    barre.style.display = "none";
+    bouton.disabled = false;
+    bouton.textContent = "Relancer la machine";
+  }
+</script>
+</body>
+</html>
